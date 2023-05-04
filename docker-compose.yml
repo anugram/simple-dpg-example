@@ -23,3 +23,26 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+  ui:
+    container_name: ui
+    ports:
+      - 3000:3000
+      - 3001:3001
+    volumes:
+      - /app/node_modules
+      - ./ui:/app
+    stdin_open: true
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+  ciphertrust:
+    image: thalesciphertrust/ciphertrust-data-protection-gateway:latest
+    container_name: ciphertrust
+    environment:
+      - REG_TOKEN=rfxbPVMueQBXB6qJB20KNrgtxNwuribbAwk5PNcBL6MlrMy9g0djgjGkxcmzswyP
+      - DESTINATION_URL=http://api:8080
+      - DPG_PORT=9005
+      - TLS_ENABLED=false
+      - KMS=40.121.32.75
+    ports:
+      - 9005:9005

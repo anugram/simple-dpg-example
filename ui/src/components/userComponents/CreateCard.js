@@ -6,7 +6,7 @@ async function addCard(cardDetails) {
         'Content-Type': 'application/json',
         'Authorization': `Basic ${sessionStorage.getItem('credentials')}` 
     };
-    return fetch('http://localhost:8080/api/cards/save', {
+    return fetch('http://localhost:3001/express/add/card', {
       method: 'POST',
       headers: reqHeaders,
       body: JSON.stringify(cardDetails)
