@@ -3,12 +3,14 @@
  */
 package com.example.dpg.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,17 +71,22 @@ public class CardController {
 		return response;
 	}
 	
-	@Operation(summary = "List all cards")
+	@Operation(summary = "List Cards")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "Cards Retrieved Succesfully", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = CardListResponseBean.class)) }),
 		@ApiResponse(responseCode = "404", description = "Resource not found", content = @Content) })
 	@CrossOrigin(origins = "*")
-	@GetMapping("/api/cards/list")
-	public CardListResponseBean listCards() {
+	@GetMapping("/api/cards/list/{id}")
+	public CardListResponseBean listCards(@PathVariable("id") String id) {
 		CardListResponseBean response = new CardListResponseBean();
+		List<CardDetailsModel> acc = new ArrayList<CardDetailsModel>();
 		try {
-			List<CardDetailsModel> acc = mongoRepo.findAll();
+			if(id.equals("all")) {
+				acc = mongoRepo.findAll();
+			} else {
+				acc.add(mongoRepo.findById(id).get());
+			}
 			response.setStatus(HttpStatus.OK.toString());
 			response.setMessage("Success");
 			response.setCards(acc);

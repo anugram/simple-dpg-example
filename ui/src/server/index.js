@@ -14,10 +14,10 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-app.get("/express/list/cards/all", (req, res) => {
+app.get("/express/list/cards/:id", (req, res) => {
     let authHeader = req.headers.authorization
     var options = {
-        uri: 'http://ciphertrust:9005/api/cards/list',
+        uri: 'http://ciphertrust:9005/api/cards/list/' + req.params.id,
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -26,7 +26,6 @@ app.get("/express/list/cards/all", (req, res) => {
     }
     
     request(options, function (error, response) {
-        console.log(error)
         res.set('Content-Type', 'application/json');
         res.send(response.body)
     });
