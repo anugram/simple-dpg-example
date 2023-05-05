@@ -5,16 +5,25 @@ import axios from 'axios';
 function ListCards() {
     const navigate = useNavigate();
     const [cards, setCards] = useState("");
+    const AuthStr = `Basic ${sessionStorage.getItem('credentials')}`
     useEffect(() => {
         axios
-        .get('http://localhost:3001/express/list/cards/all')
+        .get('http://localhost:3001/express/list/cards/all', {headers: { Authorization: AuthStr }})
         .then((res) => {
-            console.log(res)
+            console.log(res.data.cards)
+            setCards(res.data.cards);
         })
         .catch((err) => console.log(err));
     }, [navigate]);
 
     const rows = {};
+    for (const card of cards) {
+        if (card.userId in rows) {
+          rows[card.userId].push(card);
+        } else {
+          rows[card.userId] = [card];
+        }
+    }
     return(
         <div className="container py-10 px-6 mx-auto">            
             <div className="relative bg-white z-10 -mt-8 mb-8 w-full">
@@ -39,7 +48,7 @@ function ListCards() {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th scope="col" className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase ">User Name</th>
+                            <th scope="col" className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase ">Name</th>
                             <th scope="col" className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase ">SSN</th>
                             <th scope="col" className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase ">Credit Card</th>
                             <th scope="col" className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase ">CVV</th>
@@ -51,10 +60,12 @@ function ListCards() {
                         const details = entry[1];
                         return(
                             <tr>
-                                <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">{row}</td>
-                                <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{details[0].user.username}</td>
-                                <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{details[0].card.cardNumber}</td>
-                                <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{details[0].card.cvv}</td>
+                                <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                                    {details[0].firstName} {details[0].lastName}
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{details[0].ssn}</td>
+                                <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{details[0].cardNumber}</td>
+                                <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{details[0].cvvNumber}</td>
                             </tr>
                         )
                     })}
