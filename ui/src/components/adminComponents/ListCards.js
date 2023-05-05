@@ -7,10 +7,9 @@ function ListCards() {
     const [cards, setCards] = useState("");
     useEffect(() => {
         axios
-        .get('http://localhost:8080/api/cards/list')
+        .get('http://localhost:3001/express/list/cards/all')
         .then((res) => {
             console.log(res)
-            //setCards(res.data.data);
         })
         .catch((err) => console.log(err));
     }, [navigate]);

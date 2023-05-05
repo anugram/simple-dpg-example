@@ -39,7 +39,7 @@ services:
     image: thalesciphertrust/ciphertrust-data-protection-gateway:latest
     container_name: ciphertrust
     environment:
-      - REG_TOKEN=rfxbPVMueQBXB6qJB20KNrgtxNwuribbAwk5PNcBL6MlrMy9g0djgjGkxcmzswyP
+      - REG_TOKEN=IAw4nfHW4G7ph13JbmCYQolybBSo483Awq52rGsAvEhWOZbp5v9RNMbNYibfe3rt
       - DESTINATION_URL=http://api:8080
       - DPG_PORT=9005
       - TLS_ENABLED=false

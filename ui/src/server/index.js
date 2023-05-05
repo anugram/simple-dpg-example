@@ -14,15 +14,26 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-app.get("/api", (req, res) => {
-    res.json({ message: "Hello from Express!" });
+app.get("/express/list/cards/all", (req, res) => {
+    let authHeader = req.headers.authorization
+    var options = {
+        uri: 'http://ciphertrust:9005/api/cards/list',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': authHeader
+        }
+    }
+    
+    request(options, function (error, response) {
+        console.log(error)
+        res.set('Content-Type', 'application/json');
+        res.send(response.body)
+    });
 });
 
 app.post("/express/add/card", (req, res) => {
-    //res.json({requestBody: req.body})
     let authHeader = req.headers.authorization
-    //res.json({requestHeader: authHeader})
-    console.log(req.body)
     var options = {
         uri: 'http://ciphertrust:9005/api/cards/save',
         body: JSON.stringify(req.body),
@@ -36,8 +47,7 @@ app.post("/express/add/card", (req, res) => {
     request(options, function (error, response) {
         console.log(error)
         res.json({response: response.body})
-    });
-    
+    });    
 });
 
 app.listen(PORT, () => {

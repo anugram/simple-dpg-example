@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.dpg.bean.ApiResponseBean;
 import com.example.dpg.bean.CardDetailsBean;
+import com.example.dpg.bean.CardListResponseBean;
 import com.example.dpg.model.CardDetailsModel;
 import com.example.dpg.repo.CardDataRepo;
 import com.mongodb.MongoException;
@@ -72,19 +72,27 @@ public class CardController {
 	@Operation(summary = "List all cards")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "Cards Retrieved Succesfully", content = {
-			@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class)) }),
+			@Content(mediaType = "application/json", schema = @Schema(implementation = CardListResponseBean.class)) }),
 		@ApiResponse(responseCode = "404", description = "Resource not found", content = @Content) })
 	@CrossOrigin(origins = "*")
 	@GetMapping("/api/cards/list")
-	public ResponseEntity<List<CardDetailsModel>> listCards() {
+	public CardListResponseBean listCards() {
+		CardListResponseBean response = new CardListResponseBean();
 		try {
 			List<CardDetailsModel> acc = mongoRepo.findAll();
-			return new ResponseEntity<>(acc, HttpStatus.OK);
+			response.setStatus(HttpStatus.OK.toString());
+			response.setMessage("Success");
+			response.setCards(acc);
 		} catch (MongoException me) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+			response.setMessage(me.getMessage());
+			response.setCards(null);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+			response.setMessage(e.getMessage());
+			response.setCards(null);
 		}
+		return response;
 	}
 
 }
